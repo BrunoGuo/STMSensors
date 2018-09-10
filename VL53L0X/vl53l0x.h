@@ -10,8 +10,8 @@
  * @see https://github.com/pololu/vl53l0x-arduino
  */
 
-#ifndef _VL53L0X_H_
-#define _VL53L0X_H_
+#ifndef __VL53L0X_H__
+#define __VL53L0X_H__
 
 // SPECIFIC INCLUDES HERE
 
@@ -27,10 +27,6 @@
 //! @see setVcselPulsePeriod
 #define VL53L0X_VCSEL_PRE_RANGE 18
 #define VL53L0X_VCSEL_FINAL_RANGE 14
-
-/*****************************************
- * Public Types
- *****************************************/
 
 /*****************************************
  * Public Function Prototypes
@@ -85,4 +81,4 @@ void vl53l0x_stopContinuous();
  */
 uint16_t vl53l0x_getRange();
 
-#endif
+#endif  // __VL53L0X_H__
