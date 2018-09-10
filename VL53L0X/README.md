@@ -6,6 +6,14 @@ Testado com projetos do STM32CubeMX, usando a biblioteca HAL, e por padrão usa 
 
 -------
 
+### Changelog
+
+* 09/2018
+  * Change ADDRESS_DEFAULT to VL53L0X_DEFAULT_ADDRESS to avoid name collisions
+  * Improved in-file documentation
+  * Add VL53L0X_I2C_HANDLER, VL53L0X_VCSEL_PRE_RANGE, VL53L0X_VCSEL_FINAL_RANGE constant for easier changing
+  * Add VL53L0X_TIMEOUT_RETURN_VALUE
+
 ### Funções disponiveis
 
 * `uint8_t vl53l0x_init()`
@@ -38,26 +46,22 @@ Testado com projetos do STM32CubeMX, usando a biblioteca HAL, e por padrão usa 
 
 ```c
 // vl53l0x.h
-13    #define _VL53L0X_H_
-14
-15    // SPECIFIC INCLUDES HERE
-16
-17    #define ADDRESS_DEFAULT (0x52)
+13    #ifndef _VL53L0X_H_
+14    #define _VL53L0X_H_
+15
+16    // SPECIFIC INCLUDES HERE
+17
+18    /*****************************************
 ```
 
-Dois valores também podem ser modificados em `vl53l0x.c` para mudar o comportamento dos sensores inicializados:
-
+Também em `vl53l0x.h` pode-se mudar as constantes de acordo com o projeto:
 ```c
-// vl53l0x.c
-282   setVcselPulsePeriod(VcselPeriodPreRange, 18);
-283   setVcselPulsePeriod(VcselPeriodFinalRange, 14);
+25    #define VL53L0X_I2C_HANDLER hi2c1      /**< I2C handler */
+26
+27    //! @see setVcselPulsePeriod
+28    #define VL53L0X_VCSEL_PRE_RANGE 18
+29    #define VL53L0X_VCSEL_FINAL_RANGE 14
 ```
-
-Do repositório da Pololu:
-
-> Pre: 12 to 18 (initialized to 14 by default)
->
-> Final: 8 to 14 (initialized to 10 by default)
 
 -----------
 
