@@ -16,7 +16,7 @@
  * Private Constants
  *****************************************/
 
-#define VL53L0X_I2C_TIMEOUT 1000
+#define VL53L0X_I2C_TIMEOUT_MS 1000
 
 //! @see setVcselPulsePeriod
 #define VL53L0X_VCSEL_PRE_RANGE 18

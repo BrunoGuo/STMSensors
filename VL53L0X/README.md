@@ -69,7 +69,7 @@ void sensors_init() {
       .xshut_pin = GPIO_PIN_4,
     };
 
-    vl53l0x_t sensor1 = {
+    vl53l0x_t sensor2 = {
       .hi2c = &hi2c2,
       .addr = VL53L0X_DEFAULT_ADDRESS,
       .xshut_port = GPIOA,

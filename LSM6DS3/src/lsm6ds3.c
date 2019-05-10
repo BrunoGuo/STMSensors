@@ -17,15 +17,13 @@
  * Private Constants
  *****************************************/
 
-#define TIMEOUT 1000
+#define LSM6DS3_I2C_TIMEOUT_MS 1000
 
 /*****************************************
  * Private Variables
  *****************************************/
 
-// static uint8_t address = LSM6DS3_DEFAULT_ADDRESS;
 static HAL_StatusTypeDef status;
-// static I2C_HandleTypeDef* i2c_handler;
 
 /*****************************************
  * Private Function Prototypes
@@ -46,10 +44,6 @@ static void read_multi(lsm6ds3_t* lsm6ds3, uint8_t reg, uint8_t* dst, uint8_t co
 /*****************************************
  * Public Function Body Definitions
  *****************************************/
-
-// void lsm5ds3_i2c_set(I2C_HandleTypeDef* hi2c) {
-//     i2c_handler = hi2c;
-// }
 
 lsm6ds3_settings_t lsm6ds3_get_default_settings(void) {
     return (lsm6ds3_settings_t){
