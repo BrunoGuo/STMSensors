@@ -80,7 +80,6 @@ typedef struct __attribute__((packed)) lsm6ds3 {
  * Public Function Prototypes
  *****************************************/
 
-// void lsm5ds3_i2c_set(I2C_HandleTypeDef* hi2c);
 lsm6ds3_settings_t lsm6ds3_get_default_settings(void);
 lsm6ds3_status_t lsm6ds3_init(lsm6ds3_t* lsm6ds3);
 
