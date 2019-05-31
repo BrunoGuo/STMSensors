@@ -15,8 +15,8 @@
 
 #include <stdint.h>
 
-#include "i2c.h"
 #include "gpio.h"
+#include "i2c.h"
 
 /*****************************************
  * Public Constants
@@ -29,11 +29,14 @@
  * Public Types
  *****************************************/
 
+/**
+ * @brief Hold configuration of a single Vl53l0X sensor.
+ */
 typedef struct __attribute__((packed)) vl53l0x {
-    uint8_t addr;
-    I2C_HandleTypeDef* hi2c;
-    GPIO_TypeDef* xshut_port;
-    uint16_t xshut_pin;
+    uint8_t addr;             /**< Sensor I2C device address */
+    I2C_HandleTypeDef* hi2c;  /**< Pointer to sensor I2C handler */
+    GPIO_TypeDef* xshut_port; /**< Pointer to sensor xshut GPIO port */
+    uint16_t xshut_pin;       /**< Sensor xshut pin number */
 } vl53l0x_t;
 
 /*****************************************
@@ -41,41 +44,58 @@ typedef struct __attribute__((packed)) vl53l0x {
  *****************************************/
 
 /**
- * @brief Initializes a single VL53L0X device.
+ * @brief Initialize a single VL53L0X device.
  *
- * @note This must be called before any other function,
- *       except vl53l0x_i2c_set. Be sure only one
+ * @param vl53l0x Sensor to be initialized
+ *
+ * @note This must be called before any other function. Be sure only one
  *       uninitialized sensor is active through XSHUT pin.
  *
  * @return 0 on failure, 1 on success.
  */
 uint8_t vl53l0x_init(vl53l0x_t* vl53l0x);
 
+/**
+ * @brief Turn off xshut pin of a given sensor.
+ *
+ * @param vl53l0x Sensor to turn off the xshut pin
+ */
 void vl53l0x_xshut_off(vl53l0x_t* vl53l0x);
 
+/**
+ * @brief Turn on xshut pin of a given sensor.
+ *
+ * @param vl53l0x Sensor to turn on the xshut pin
+ */
 void vl53l0x_xshut_on(vl53l0x_t* vl53l0x);
 
 /**
- * @brief Changes current device address.
+ * @brief Change I2C device address of a given sensor.
  *
+ * @param vl53l0x Sensor to change the I2C device address
  * @param new_addr 8 bit address to be set
  */
 void vl53l0x_set_dev_address(vl53l0x_t* vl53l0x, uint8_t new_addr);
 
 /**
- * @brief Start current device continuous measuring.
+ * @brief Start continuous measuring of a given sensor.
  *
+ * @param vl53l0x Sensor to start the continuous measuring
  * @param period_ms Measuring period
  */
 void vl53l0x_start_continuous(vl53l0x_t* vl53l0x, uint32_t period_ms);
 
 /**
- * @brief Stop current device continuous measuring.
+ * @brief Stop continuous measuring of a given sensor.
+ *
+ * @param vl53l0x Sensor to stop the continuous measuring
  */
 void vl53l0x_stop_continuous(vl53l0x_t* vl53l0x);
 
 /**
- * @brief Get the current device's last measured range.
+ * @brief Get the last measured range of a given sensor.
+ *
+ * @param vl53l0x Sensor to get the last measured range.
  *
  * @note vl53l0x_start_continuous must be called first.
  *
