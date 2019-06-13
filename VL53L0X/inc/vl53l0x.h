@@ -14,6 +14,7 @@
 #define __VL53L0X_H__
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "gpio.h"
 #include "i2c.h"
@@ -22,25 +23,25 @@
  * Public Constants
  *****************************************/
 
-#define VL53L0X_DEFAULT_ADDRESS (0x52)       /**< Default sensor address, don't change */
-#define VL53L0X_TIMEOUT_RETURN_VALUE (65535) /**< Value returned if getRange times out */
+#define VL53L0X_DEFAULT_ADDRESS (0x52)        /**< Default sensor address, don't change */
+#define VL53L0X_TIMEOUT_RETURN_VALUE (0XFFFF) /**< Value returned if getRange times out */
 
 /*****************************************
  * Public Types
  *****************************************/
 
 /**
- * @brief Hold configuration of a single Vl53l0X sensor.
+ * @brief Hold configuration of a single VL53L0X sensor.
  */
-typedef struct __attribute__((packed)) vl53l0x {
-    uint8_t addr;
+typedef struct __attribute__((packed)) vl53l0x_handler {
+    uint8_t            addr;
     I2C_HandleTypeDef* hi2c;
 
-    GPIO_TypeDef* xshut_port;
-    uint16_t xshut_pin;
+    GPIO_TypeDef*      xshut_port;
+    uint16_t           xshut_pin;
 
-    uint8_t stop_variable;
-} vl53l0x_t;
+    uint8_t            stop_variable;
+} vl53l0x_handler_t;
 
 /*****************************************
  * Public Function Prototypes
@@ -54,9 +55,9 @@ typedef struct __attribute__((packed)) vl53l0x {
  * @note This must be called before any other function. Be sure only one
  *       uninitialized sensor is active through XSHUT pin.
  *
- * @return 0 on failure, 1 on success.
+ * @return false on failure, true on success.
  */
-uint8_t vl53l0x_init(vl53l0x_t* vl53l0x);
+bool vl53l0x_init(vl53l0x_t* vl53l0x);
 
 /**
  * @brief Turn off xshut pin of a given sensor.
@@ -106,4 +107,4 @@ void vl53l0x_stop_continuous(vl53l0x_t* vl53l0x);
  */
 uint16_t vl53l0x_get_range(vl53l0x_t* vl53l0x);
 
-#endif  // __VL53L0X_H__
+#endif // __VL53L0X_H__
