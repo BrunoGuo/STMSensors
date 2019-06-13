@@ -34,13 +34,13 @@
  * @brief Hold configuration of a single VL53L0X sensor.
  */
 typedef struct __attribute__((packed)) vl53l0x_handler {
-    uint8_t            addr;
-    I2C_HandleTypeDef* hi2c;
+    uint8_t            addr;             /**< Sensor I2C device address, should be initialized as DEFAULT */
+    I2C_HandleTypeDef* hi2c;             /**< Pointer to sensor I2C handler */
 
-    GPIO_TypeDef*      xshut_port;
-    uint16_t           xshut_pin;
+    GPIO_TypeDef*      xshut_port;       /**< Pointer to sensor xshut GPIO handler */
+    uint16_t           xshut_pin;        /**< Sensor xshut pin number */
 
-    uint8_t            stop_variable;
+    uint8_t            stop_variable;    /**< Internal variable */
 } vl53l0x_handler_t;
 
 /*****************************************
