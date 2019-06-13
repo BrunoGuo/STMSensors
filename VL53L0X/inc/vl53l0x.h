@@ -32,8 +32,11 @@
 typedef struct __attribute__((packed)) vl53l0x {
     uint8_t addr;
     I2C_HandleTypeDef* hi2c;
+
     GPIO_TypeDef* xshut_port;
     uint16_t xshut_pin;
+
+    uint8_t stop_variable;
 } vl53l0x_t;
 
 /*****************************************

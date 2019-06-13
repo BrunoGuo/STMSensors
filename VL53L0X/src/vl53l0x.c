@@ -149,7 +149,6 @@ typedef enum { VcselPeriodPreRange, VcselPeriodFinalRange } vcselPeriodType;
 static uint8_t did_timeout = 0;   /**< Timeout detection */
 static uint16_t io_timeout = 500; /**< Timeout in miliseconds */
 
-static uint8_t stop_variable;
 static uint8_t timeout_start_ms;
 static uint32_t measurement_timing_budget_us;
 
@@ -332,7 +331,7 @@ uint8_t vl53l0x_init(vl53l0x_t* vl53l0x) {
     write_reg(vl53l0x, 0x80, 0x01);
     write_reg(vl53l0x, 0xFF, 0x01);
     write_reg(vl53l0x, 0x00, 0x00);
-    stop_variable = read_reg(vl53l0x, 0x91);
+    vl53l0x->stop_variable = read_reg(vl53l0x, 0x91);
     write_reg(vl53l0x, 0x00, 0x01);
     write_reg(vl53l0x, 0xFF, 0x00);
     write_reg(vl53l0x, 0x80, 0x00);
@@ -553,7 +552,7 @@ void vl53l0x_start_continuous(vl53l0x_t* vl53l0x, uint32_t period_ms) {
     write_reg(vl53l0x, 0x80, 0x01);
     write_reg(vl53l0x, 0xFF, 0x01);
     write_reg(vl53l0x, 0x00, 0x00);
-    write_reg(vl53l0x, 0x91, stop_variable);
+    write_reg(vl53l0x, 0x91, vl53l0x->stop_variable);
     write_reg(vl53l0x, 0x00, 0x01);
     write_reg(vl53l0x, 0xFF, 0x00);
     write_reg(vl53l0x, 0x80, 0x00);
