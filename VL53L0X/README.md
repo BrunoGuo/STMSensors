@@ -8,6 +8,10 @@ Testado com projetos do STM32CubeMX, usando a biblioteca HAL.
 
 ### Changelog
 
+- 05/2019
+
+  - Add vl53l0x struct, avoids using global variables for i2c and current address.
+
 - 01/2019
 
   - Remove the need to modify header file, better for submodule use
@@ -25,30 +29,28 @@ Testado com projetos do STM32CubeMX, usando a biblioteca HAL.
 
 ### Funções disponiveis
 
-- `uint8_t vl53l0x_i2c_set(I2C_HandleTypeDef* hi2c)`
-
-  Essa função deve ser chamada antes de qualquer outra, ela define qual I2C deve ser utilizado.
-
-- `uint8_t vl53l0x_init()`
+- `uint8_t vl53l0x_init(vl53l0x_t* vl53l0x)`
 
   Essa função deve ser chamada antes de qualquer tentativa de leitura do sensor,
   ela inicializa o sensor e retorna 1 em caso de sucesso ou 0, em caso de erro.
 
-- `void vl53l0x_set_dev_address(uint8_t new_addr)`
+- `void vl53l0x_xshut_off(vl53l0x_t* vl53l0x)`
+
+  `void vl53l0x_xshut_on(vl53l0x_t* vl53l0x)`
+
+  Essas funções desligam e ligam o sensor através de seu pino xshut.
+
+- `void vl53l0x_set_dev_address(vl53l0x_t* vl53l0x, uint8_t new_addr)`
 
   Essa função modifica o endereço I2C do dispositivo atual (8 bits), necessário ao utilizar mais de um sensor.
 
-- `void vl53l0x_set_current_address(uint8_t new_addr)`
+- `void vl53l0x_start_continuous(vl53l0x_t* vl53l0x, uint32_t period_ms)`
 
-  Essa função muda o endereço do dispositivo utilizado pelas outras funções (8 bits), não acessa os sensores diretamente.
-
-- `void vl53l0x_start_continuous(uint32_t period_ms)`
-
-  `void vl53l0x_stop_continuous()`
+  `void vl53l0x_stop_continuous(vl53l0x_t* vl53l0x)`
 
   Essas funções iniciam e param a leitura contínua do sensor atual, respectivamente.
 
-- `uint16_t vl53l0x_get_range()`
+- `uint16_t vl53l0x_get_range(vl53l0x_t* vl53l0x)`
 
   Essa função retorna o último valor lido do sensor atual.
 
@@ -60,42 +62,49 @@ Testado com projetos do STM32CubeMX, usando a biblioteca HAL.
 
 ```c
 void sensors_init() {
-    // Define o I2C correto
-    vl53l0x_i2c_set(&hi2c2);
+    vl53l0x_t sensor1 = {
+      .hi2c = &hi2c2,
+      .addr = VL53L0X_DEFAULT_ADDRESS,
+      .xshut_port = GPIOA,
+      .xshut_pin = GPIO_PIN_4,
+    };
+
+    vl53l0x_t sensor2 = {
+      .hi2c = &hi2c2,
+      .addr = VL53L0X_DEFAULT_ADDRESS,
+      .xshut_port = GPIOA,
+      .xshut_pin = GPIO_PIN_5,
+    };
 
     // Desativa os dois sensores (Pino XSHUT)
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+    vl53l0x_xshut_off(&sensor1);
+    vl53l0x_xshut_off(&sensor2);
     HAL_Delay(10);
 
     // Ativa um dos sensores
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+    vl53l0x_xshut_on(&sensor1);
     HAL_Delay(100);
     // Inicializa
-    vl53l0x_init();
+    vl53l0x_init(&sensor1);
     // Muda o endereço do sensor
-    vl53l0x_set_dev_address(0x54);
+    vl53l0x_set_dev_address(&sensor1, 0x54);
     HAL_Delay(10);
 
     // Ativa o outro sensor
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+    vl53l0x_xshut_on(&sensor2);
     HAL_Delay(100);
     // Inicializa
-    vl53l0x_init();
+    vl53l0x_init(&sensor2);
     // Muda o endereço do sensor
-    vl53l0x_set_dev_address(0x56);
+    vl53l0x_set_dev_address(&sensor2, 0x56);
     HAL_Delay(10);
 
-    HAL_Delay(1);
-    // Muda o endereço atual das funções
-    vl53l0x_set_current_address(0x54);
     // Inicia as medições do primeiro sensor
-    vl53l0x_start_continuous(2);
+    vl53l0x_start_continuous(&sensor1, 2);
     HAL_Delay(1);
-    // Muda o endereço atual das funções
-    vl53l0x_set_current_address(0x56);
+
     // Inicia as medições do segundo sensor
-    vl53l0x_start_continuous(2);
+    vl53l0x_start_continuous(&sensor2, 2);
     HAL_Delay(1);
 }
 ```
