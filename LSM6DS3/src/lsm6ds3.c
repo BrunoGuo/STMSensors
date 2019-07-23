@@ -33,12 +33,8 @@ static HAL_StatusTypeDef status;
  * @brief HAL I2C wrapper functions.
  */
 static void write_reg(lsm6ds3_t* lsm6ds3, uint8_t reg, uint8_t val);
-static void write_reg16(lsm6ds3_t* lsm6ds3, uint8_t reg, uint16_t val);
-static void write_reg32(lsm6ds3_t* lsm6ds3, uint8_t reg, uint32_t val);
-static void write_multi(lsm6ds3_t* lsm6ds3, uint8_t reg, uint8_t* src, uint8_t count);
 static uint8_t read_reg(lsm6ds3_t* lsm6ds3, uint8_t reg);
 static uint16_t read_reg16(lsm6ds3_t* lsm6ds3, uint8_t reg);
-static uint32_t read_reg32(lsm6ds3_t* lsm6ds3, uint8_t reg);
 static void read_multi(lsm6ds3_t* lsm6ds3, uint8_t reg, uint8_t* dst, uint8_t count);
 
 /*****************************************
@@ -346,45 +342,6 @@ void write_reg(lsm6ds3_t* lsm6ds3, uint8_t reg, uint8_t val) {
     } while (status != HAL_OK && ((HAL_GetTick() - tickstart) < LSM6DS3_I2C_TIMEOUT_MS));
 }
 
-void write_reg16(lsm6ds3_t* lsm6ds3, uint8_t reg, uint16_t val) {
-    uint8_t bytes[3] = {reg, (val >> 8) & 0xFF, val & 0xFF};
-    uint8_t status;
-
-    uint32_t tickstart = HAL_GetTick();
-    do {
-        status = HAL_I2C_Master_Transmit(lsm6ds3->hi2c, lsm6ds3->addr, (uint8_t*) (&bytes), 3, LSM6DS3_I2C_TIMEOUT_MS);
-    } while (status != HAL_OK || ((HAL_GetTick() - tickstart) > LSM6DS3_I2C_TIMEOUT_MS));
-}
-
-void write_reg32(lsm6ds3_t* lsm6ds3, uint8_t reg, uint32_t val) {
-    uint8_t bytes[5] = {reg, (val >> 24) & 0xFF, (val >> 16) & 0xFF, (val >> 8) & 0xFF, val & 0xFF};
-    uint8_t status;
-
-    uint32_t tickstart = HAL_GetTick();
-    do {
-        status = HAL_I2C_Master_Transmit(lsm6ds3->hi2c, lsm6ds3->addr, (uint8_t*) (&bytes), 5, LSM6DS3_I2C_TIMEOUT_MS);
-    } while (status != HAL_OK || ((HAL_GetTick() - tickstart) > LSM6DS3_I2C_TIMEOUT_MS));
-}
-
-void write_multi(lsm6ds3_t* lsm6ds3, uint8_t reg, uint8_t* src, uint8_t count) {
-    if (count > 31) {
-        return;
-    }
-
-    count++;
-    uint8_t bytes[32] = {0};
-    bytes[0] = reg;
-    for (uint8_t i = 1; i < count; i++) {
-        bytes[i] = src[i - 1];
-    }
-
-    uint8_t status;
-    uint32_t tickstart = HAL_GetTick();
-    do {
-        status = HAL_I2C_Master_Transmit(lsm6ds3->hi2c, lsm6ds3->addr, (uint8_t*) (&bytes), count, LSM6DS3_I2C_TIMEOUT_MS);
-    } while (status != HAL_OK || ((HAL_GetTick() - tickstart) > LSM6DS3_I2C_TIMEOUT_MS));
-}
-
 uint8_t read_reg(lsm6ds3_t* lsm6ds3, uint8_t reg) {
     uint8_t val;
 
@@ -401,13 +358,6 @@ uint16_t read_reg16(lsm6ds3_t* lsm6ds3, uint8_t reg) {
     read_multi(lsm6ds3, reg, val, 2);
 
     return (uint16_t) val[1] << 8 | val[0];
-}
-
-uint32_t read_reg32(lsm6ds3_t* lsm6ds3, uint8_t reg) {
-    uint8_t val[4];
-    read_multi(lsm6ds3, reg, val, 4);
-
-    return (uint32_t) val[0] << 24 | (uint32_t) val[1] << 16 | (uint16_t) val[2] << 8 | val[3];
 }
 
 void read_multi(lsm6ds3_t* lsm6ds3, uint8_t reg, uint8_t* dst, uint8_t count) {
