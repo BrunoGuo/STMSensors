@@ -343,7 +343,7 @@ void write_reg(lsm6ds3_t* lsm6ds3, uint8_t reg, uint8_t val) {
     uint32_t tickstart = HAL_GetTick();
     do {
         status = HAL_I2C_Master_Transmit(lsm6ds3->hi2c, lsm6ds3->addr, (uint8_t*) (&bytes), 2, LSM6DS3_I2C_TIMEOUT_MS);
-    } while (status != HAL_OK || ((HAL_GetTick() - tickstart) > LSM6DS3_I2C_TIMEOUT_MS));
+    } while (status != HAL_OK && ((HAL_GetTick() - tickstart) < LSM6DS3_I2C_TIMEOUT_MS));
 }
 
 void write_reg16(lsm6ds3_t* lsm6ds3, uint8_t reg, uint16_t val) {
